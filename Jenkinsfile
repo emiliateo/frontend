@@ -49,6 +49,8 @@ pipeline {
 				script {
 			      dir('.') {
                     def artifact_name = "build-${BUILD_ID}"
+					
+					if (env.BRANCH_NAME == 'main') {
                     nexusArtifactUploader (
                         nexusVersion: NEXUS_VERSION,
                         protocol: NEXUS_PROTOCOL,
@@ -65,6 +67,26 @@ pipeline {
                     )
 
 				  }
+				  
+				  else{				  
+					  nexusArtifactUploader (
+                        nexusVersion: NEXUS_VERSION,
+                        protocol: NEXUS_PROTOCOL,
+                        nexusUrl: NEXUS_URL,
+                        repository: "frontend_not_main",
+                        version: "$BUILD_DATE",
+                        credentialsId: NEXUS_CREDENTIAL_ID,
+                        groupId: 'devops-training',
+                        
+
+						 artifacts: [
+                                [artifactId: 'build', file: "${artifact_name}.zip", type: 'zip']
+							]
+                    )
+					
+				  }
+				  
+				 } 
 				}
 			}
 		}
